@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>nodee for kids — Alphabet Claw Machine</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>" />
+<meta name="description" content="A premium educational crane game for kids. Catch letters and learn the alphabet!" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-decor" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    <span class="star s1">★</span><span class="star s2">★</span><span class="star s3">★</span>
+    <span class="star s4">★</span><span class="star s5">★</span>
+  </div>
+
+  <main class="phone" id="phone">
+    <!-- ===== HEADER ===== -->
+    <header class="hud">
+      <div class="brand-row">
+        <div class="logo-badge" title="nodee for kids">
+          <!-- To use the PDF logo: export it as logo.png next to index.html — it appears here automatically. -->
+          <span class="logo-text">nodee <em>for kids</em></span>
+        </div>
+        <div class="hud-btns">
+          <button class="icon-btn" id="soundBtn" aria-label="Toggle sound" title="Sound">🔊</button>
+          <button class="icon-btn" id="voiceBtn" aria-label="Toggle voice" title="Voice">🗣️</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card points-card">
+          <span class="stat-ico">⭐</span>
+          <span class="stat-num" id="points">0</span>
+          <span class="stat-label">points</span>
+        </div>
+        <div class="stat-card round-card">
+          <span class="stat-ico">🎯</span>
+          <span class="stat-num"><span id="roundNum">1</span><span class="dim">/8</span></span>
+          <span class="stat-label">round</span>
+        </div>
+        <div class="stat-card streak-card">
+          <span class="stat-ico">🔥</span>
+          <span class="stat-num" id="streak">0</span>
+          <span class="stat-label">streak</span>
+        </div>
+      </div>
+
+      <div class="power-wrap" title="Claw Power">
+        <span class="power-label">⚡ Claw Power</span>
+        <div class="power-bar"><div class="power-fill" id="powerFill"></div><div class="power-shine"></div></div>
+      </div>
+
+      <div class="task-card" id="taskCard">
+        <button class="speak-btn" id="speakBtn" aria-label="Hear the instruction">🔈</button>
+        <div class="task-text">
+          <div class="task-top"><span class="task-kicker">FIND THIS LETTER</span></div>
+          <div class="task-main"><span class="task-letter" id="taskLetter">B</span>
+            <span class="task-phrase"><strong id="taskWord1">B</strong> is for <strong id="taskWord2">Bear</strong> <span id="taskEmoji">🐻</span></span>
+          </div>
+        </div>
+        <div class="task-stars" id="taskStars" aria-label="Progress stars"></div>
+      </div>
+    </header>
+
+    <!-- ===== MACHINE TANK ===== -->
+    <section class="machine" id="machine">
+      <div class="machine-top">
+        <span class="light l1"></span><span class="light l2"></span><span class="light l3"></span>
+        <span class="light l4"></span><span class="light l5"></span>
+      </div>
+
+      <div class="tank" id="tank">
+        <div class="glass-shine" aria-hidden="true"></div>
+        <div class="chute" id="chute" aria-label="Prize chute">
+          <div class="chute-door">🎁<small>PRIZE</small></div>
+        </div>
+
+        <!-- rail + carriage + rope + claw -->
+        <div class="rail" aria-hidden="true"><div class="rail-groove"></div></div>
+        <div class="carriage" id="carriage">
+          <div class="carriage-body"></div>
+          <div class="rope" id="rope"></div>
+          <div class="claw" id="claw">
+            <div class="claw-hub"></div>
+            <div class="prong p-left"></div>
+            <div class="prong p-right"></div>
+            <div class="prong p-mid"></div>
+            <div class="grab-item" id="grabItem" hidden></div>
+          </div>
+        </div>
+
+        <div class="toy-floor" id="toyFloor" aria-label="Toys"></div>
+        <div class="floor-glow" aria-hidden="true"></div>
+
+        <div class="score-pop-layer" id="popLayer"></div>
+        <canvas class="fx-canvas" id="fxCanvas"></canvas>
+
+        <!-- overlays inside tank -->
+        <div class="tank-toast" id="tankToast" hidden></div>
+
+        <div class="start-overlay" id="startOverlay">
+          <div class="start-card">
+            <div class="mascot">🧸</div>
+            <h1>Alphabet<br />Claw Machine</h1>
+            <p>Move the claw, press <b>DROP</b>,<br />and catch the letter you hear!</p>
+            <div class="how-row">
+              <span>◀ ▶<small>move</small></span>
+              <span>⬇<small>drop</small></span>
+              <span>🎁<small>win prizes</small></span>
+            </div>
+            <button class="big-btn play-btn" id="playBtn">▶ &nbsp;PLAY</button>
+          </div>
+        </div>
+
+        <div class="victory-overlay" id="victoryOverlay" hidden>
+          <div class="victory-card">
+            <div class="confetti-emoji">🎉</div>
+            <h2>You did it!</h2>
+            <p class="v-sub">Alphabet Superstar 🌟</p>
+            <div class="v-score"><span id="finalPoints">0</span><small>points</small></div>
+            <div class="v-stars" id="vStars">★★★★★★★★</div>
+            <div class="v-letters" id="vLetters"></div>
+            <button class="big-btn play-btn" id="replayBtn">↻ &nbsp;PLAY AGAIN</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTROL PANEL ===== -->
+    <footer class="panel">
+      <div class="panel-inner">
+        <div class="move-cluster">
+          <button class="arcade-btn move-btn" id="leftBtn" aria-label="Move left">◀</button>
+          <button class="arcade-btn move-btn" id="rightBtn" aria-label="Move right">▶</button>
+        </div>
+        <button class="big-btn drop-btn" id="dropBtn"><span class="drop-ico">⬇</span> DROP</button>
+      </div>
+      <p class="hint">Hold ◀ ▶ or drag inside the glass • Keyboard: ← → + Space</p>
+    </footer>
+  </main>
+
+<script src="game.js"></script>
+</body>
+</html>
